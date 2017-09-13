@@ -3,44 +3,44 @@
 module Main where
 
 import Lib
-import Text.HTML.TagSoup
-import Text.HTML.Scalpel
-import Control.Monad (forM_)
 import Data.Text (unpack)
 import Data.Text.Encoding (decodeLatin1)
+import Data.List.Split (chunksOf)
 import Data.ByteString as B (readFile)
+import Control.Monad (forM_, guard)
+import Text.HTML.Scalpel
+import Text.HTML.TagSoup (parseTags, Tag)
 
 data Stock = Stock
-    { sName :: String
-    , sPrice :: Double
-    }
+    { name :: String
+    , latestPrice :: String
+    , priceChange :: String
+    , priceChangePercent :: String
+    , highest :: String
+    , lowest :: String
+    , volume :: String
+    } deriving Show
 
 main :: IO ()
 main = do
-    tags <- parseTags . unpack . decodeLatin1 <$> B.readFile "testres/omx.html"
-    let res = scrape stockNumbers tags
-    case res of
-      Just nrs -> do forM_ nrs putStrLn
-      Nothing -> print "nothing"
+  tags <- parseTags . unpack . decodeLatin1 <$> B.readFile "testres/omx.html"
+  let stocks = scrapeStocks tags
+  forM_ stocks (putStrLn . show)
 
-stockNumbers :: Scraper String [String]
-stockNumbers = chroots selector name
-  where selector = ("tr" @: [hasClass "highLight"]) // ("td" @: [hasClass "text"])
+scrapeStocks :: [Tag String] -> Maybe [Stock]
+scrapeStocks tags = mkStocks <$> scrape stockData tags
 
-name :: Scraper String String
-name = innerHTML $ "a" @: [hasClass "underline"]
+stockData :: Scraper String [(Int, String)]
+stockData = chroots (("tr" @: [hasClass "highLight"]) // "td") $ do
+  index <- position
+  content <- text "td"
+  return (index, content)
 
+mkStocks :: [(Int, String)] -> [Stock]
+mkStocks rawdata = mkStock <$> groups
+  where groups = chunksOf 12 rawdata
+        mkStock (_:xs) = parseStockData $ snd (unzip xs)
 
-price :: Scraper String Double
-price = undefined
-
-
--- findNumber :: [Tag String] -> [String]
--- findNumber tags = map filterNumber $ sections (~== "<td class=text>") tags
---     where filterNumber :: [Tag String] -> String
---           filterNumber = strip . innerText . dropWhile (~/= "<td>")
---           commaToDot ',' = '.'
---           commaToDot c = c
-
-strip :: String -> String
-strip = filter (\c -> c /= '\n' || c /= '\t')
+parseStockData :: [String] -> Stock
+parseStockData [n, p, c, cp, _, _, h, l, v, _, _] =
+  Stock n p c cp h l v
