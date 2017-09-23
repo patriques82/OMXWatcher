@@ -1,8 +1,0 @@
-1. Downloader:
-    * Download html from OMX
-    * Parse html to datatype
-    * Process ??
-    * Store in DB
-
-2. Analyzer:
-    ??

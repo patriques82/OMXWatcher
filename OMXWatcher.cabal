@@ -19,10 +19,10 @@ library
   build-depends:       base >= 4.7 && < 5
   default-language:    Haskell2010
 
-executable OMXWatcher-exe
-  hs-source-dirs:      app
-  main-is:             Main.hs
-  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+executable omxwatcher
+  hs-source-dirs:      src
+  main-is:             Omxwatcher.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N -main-is Omxwatcher
   build-depends:       base
                      , bytestring
                      , OMXWatcher
@@ -30,6 +30,28 @@ executable OMXWatcher-exe
                      , split
                      , tagsoup
                      , text
+  default-language:    Haskell2010
+
+executable marketsim
+  hs-source-dirs:      src
+  main-is:             Marketsim.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N -main-is Marketsim
+  build-depends:       base
+                     , OMXWatcher
+                     , http-client-tls >= 0.3
+                     , servant-client >= 0.11
+                     , yahoo-finance-api
+  default-language:    Haskell2010
+
+executable plotter
+  hs-source-dirs:      src
+  main-is:             Plotter.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N -main-is Plotter
+  build-depends:       base
+                     , bytestring
+                     , vector
+                     , cassava
+                     , OMXWatcher
   default-language:    Haskell2010
 
 test-suite OMXWatcher-test
