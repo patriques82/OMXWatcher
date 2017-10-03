@@ -1,12 +1,11 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module OMXWatcher.Csv (parseCSV) where
-
 import OMXWatcher.Types
 
 import Data.Char (ord, isDigit)
 import Data.ByteString.Lazy (ByteString)
-import Data.Vector (Vector)
+import Data.Vector (Vector, toList)
 import Data.List.Split (wordsBy)
 import Data.Time.Calendar (fromGregorian)
 import Data.Time.LocalTime (LocalTime(..), midnight)
@@ -30,15 +29,17 @@ instance FromNamedRecord StockRawData where
     r .: "Total volume" <*>
     r .: "Trades"
 
-parseCSV :: ByteString -> Either Error (Vector StockPoint)
+parseCSV :: ByteString -> Either Error [StockPoint]
 parseCSV csvRawData = do
   let options = defaultDecodeOptions { decDelimiter = fromIntegral (ord ';') }
   (_, v) <- decodeByNameWith options csvRawData
-  sequence $ fmap rawToStockPoint v
+  sequence . fmap rawToStockPoint $ toList v
 
 rawToStockPoint :: StockRawData -> Either Error StockPoint
 rawToStockPoint r = StockPoint <$>
   (stringToLocalDate $ rdate r) <*>
+  (stringToDouble $ ropeningPrice r) <*>
+  (stringToDouble $ rclosingPrice r) <*>
   (stringToDouble $ raveragePrice r) <*>
   pure (rtotalVol r) <*>
   pure (rtrades r)
@@ -61,4 +62,5 @@ stringToDouble s = do
               [n, d] -> Right (n, d)
               x -> Left $ "Not valid double: " ++ (show x)
 
+splitNumbers :: String -> [String]
 splitNumbers = wordsBy (not . isDigit)
