@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module OMXWatcher.Chart where
+module OMXWatcher.Chart (plotStockData) where
 
 import OMXWatcher.Types
 import OMXWatcher.Indicator
@@ -11,8 +11,15 @@ import Graphics.Rendering.Chart.Easy
 import Graphics.Rendering.Chart.Gtk
 import Graphics.Rendering.Chart.Backend.Cairo
 
-plotCSVData :: String -> [StockPoint] -> IO ()
-plotCSVData name stocks = renderableToWindow (toRenderable layout) 800 800
+
+renderChart :: Chart -> [StockPoint] -> [(LocalTime, Double)]
+renderChart f xs = zip dates (f vals)
+  where (dates, vals) = unzip $ fmap toTimeValue xs
+        toTimeValue s = (date s, closingPrice s)
+
+
+plotStockData :: String -> [StockPoint] -> IO ()
+plotStockData name stocks = renderableToWindow (toRenderable layout) 800 800
   where price :: PlotLines LocalTime Double
         price = plot_lines_style . line_color .~ opaque blue
               $ plot_lines_values .~ [ [ (date s, averagePrice s) | s <- stocks] ]
@@ -20,7 +27,7 @@ plotCSVData name stocks = renderableToWindow (toRenderable layout) 800 800
               $ def
         mAvg :: PlotLines LocalTime Double
         mAvg  = plot_lines_style . line_color .~ opaque red
-              $ plot_lines_values .~ [ movingAverage 10 (toTimeValues stocks) ]
+              $ plot_lines_values .~ [ renderChart (movingAverage 10) stocks ]
               $ plot_lines_title .~ "moving average"
               $ def
         layout :: LayoutLR LocalTime Double Double

@@ -44,17 +44,6 @@ executable omxwatcher
                      , text
   default-language:    Haskell2010
 
-executable marketsim
-  hs-source-dirs:      src
-  main-is:             Marketsim.hs
-  ghc-options:         -threaded -rtsopts -with-rtsopts=-N -main-is Marketsim
-  build-depends:       base
-                     , OMXWatcher
-                     , http-client-tls >= 0.3
-                     , servant-client >= 0.11
-                     , yahoo-finance-api
-  default-language:    Haskell2010
-
 executable plotter
   hs-source-dirs:      app
   main-is:             Plotter.hs

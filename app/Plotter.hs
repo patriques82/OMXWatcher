@@ -3,7 +3,7 @@
 module Plotter where
 
 import OMXWatcher.Csv (parseCSV)
-import OMXWatcher.Chart (plotCSVData)
+import OMXWatcher.Chart (plotStockData)
 
 --import Control.Monad (guard)
 --import System.Environment (getArgs)
@@ -16,4 +16,4 @@ main = do
   csvRaw <- BL.readFile "/home/patriques/Haskell/OMXWatcher/testres/SEB-C-2017-08-23-2017-09-22.csv"
   case parseCSV csvRaw of
     Left err -> putStrLn err
-    Right stocks -> plotCSVData "SEB-C" stocks
+    Right stocks -> plotStockData "SEB-C" stocks
