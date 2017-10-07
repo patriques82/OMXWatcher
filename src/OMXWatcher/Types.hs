@@ -12,8 +12,4 @@ data StockPoint = StockPoint
   , trades :: !Int
   }
 
-type Chart = [Double] -> [Double] 
-
-type TimeValue = (LocalTime, Double)
-
 type Error = String

@@ -12,11 +12,10 @@ import Graphics.Rendering.Chart.Gtk
 import Graphics.Rendering.Chart.Backend.Cairo
 
 
-renderChart :: Chart -> [StockPoint] -> [(LocalTime, Double)]
+renderChart :: ([Double] -> [Double]) -> [StockPoint] -> [(LocalTime, Double)]
 renderChart f xs = zip dates (f vals)
   where (dates, vals) = unzip $ fmap toTimeValue xs
         toTimeValue s = (date s, closingPrice s)
-
 
 plotStockData :: String -> [StockPoint] -> IO ()
 plotStockData name stocks = renderableToWindow (toRenderable layout) 800 800
