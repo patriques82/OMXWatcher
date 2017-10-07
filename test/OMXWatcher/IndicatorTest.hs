@@ -10,6 +10,7 @@ import Data.Ord
 unitTests = testGroup "Unit tests"
   [ testCase "ema" $
       (map round $ ema 12 testData) @?= [439, 438, 438, 437, 435]
+  , testCase "" $ return ()
   ]
 
 testData =

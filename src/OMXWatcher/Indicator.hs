@@ -1,14 +1,22 @@
-module OMXWatcher.Indicator where
-
-import Debug.Trace
+module OMXWatcher.Indicator
+  ( movingAverage
+  , macdLine
+  , signalLine
+  , ema
+  ) where
 
 -- MACD
 
 signalLine :: (Fractional a) => [a] -> [a]
-signalLine = undefined
+signalLine = ema 9 . macdLine 12 26
 
-macd :: (Fractional a) => [a] -> [a]
-macd = undefined
+-- macdLine 12 26 xs
+macdLine :: (Fractional a) => Int -> Int -> [a] -> [a]
+macdLine short long xs
+  | short >= long = error "first argument >= second argument"
+  | otherwise = let emaShort = ema short xs
+                    emaLong = ema long xs
+                in zipWith (-) (drop (short-long) emaShort) emaLong
 
 ema :: (Fractional a) => Int -> [a] -> [a]
 ema n xs
@@ -18,7 +26,8 @@ ema n xs
        (h, t) = splitAt n xs
        go _ [] = []
        go prev (x:xs') =
-         let curr = x * (2 / fromIntegral (n+1)) + prev * (1 - (2 / fromIntegral (n+1)))
+         let denom = fromIntegral (n+1)
+             curr = x * (2 / denom) + prev * (1 - (2 / denom))
          in curr : go curr xs'
 
 -- Simple moving average
