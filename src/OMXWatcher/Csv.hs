@@ -1,23 +1,24 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module OMXWatcher.Csv (parseCSV) where
-import OMXWatcher.Types
 
-import Data.Char (ord, isDigit)
-import Data.ByteString.Lazy (ByteString)
-import Data.Vector (Vector, toList)
-import Data.List.Split (wordsBy)
-import Data.Time.Calendar (fromGregorian)
-import Data.Time.LocalTime (LocalTime(..), midnight)
-import Data.Csv
+import           OMXWatcher.Types
+
+import           Data.ByteString.Lazy (ByteString)
+import           Data.Char            (isDigit, ord)
+import           Data.Csv
+import           Data.List.Split      (wordsBy)
+import           Data.Time.Calendar   (fromGregorian)
+import           Data.Time.LocalTime  (LocalTime (..), midnight)
+import           Data.Vector          (Vector, toList)
 
 data StockRawData = StockRawData
-  { rdate :: !String
+  { rdate         :: !String
   , ropeningPrice :: !String
   , rclosingPrice :: !String
   , raveragePrice :: !String
-  , rtotalVol :: !Int
-  , rtrades :: !Int
+  , rtotalVol     :: !Int
+  , rtrades       :: !Int
   }
 
 instance FromNamedRecord StockRawData where
@@ -51,7 +52,7 @@ stringToLocalDate s = do
     where getYearMonthDay =
             case splitNumbers s of
               [yyyy, mm, dd] -> Right (yyyy, mm, dd)
-              x -> Left $ "Not valid date: " ++ (show x)
+              x              -> Left $ "Not valid date: " ++ (show x)
 
 stringToDouble :: String -> Either Error Double
 stringToDouble s = do
@@ -60,7 +61,7 @@ stringToDouble s = do
     where getNumDecimal =
             case splitNumbers s of
               [n, d] -> Right (n, d)
-              x -> Left $ "Not valid double: " ++ (show x)
+              x      -> Left $ "Not valid double: " ++ (show x)
 
 splitNumbers :: String -> [String]
 splitNumbers = wordsBy (not . isDigit)

@@ -2,4 +2,8 @@
 dist/
 codex.tags
 OMXWatcher.iml
+.idea/
+TAGS
+cabal.config
+
 

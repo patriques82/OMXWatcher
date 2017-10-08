@@ -2,22 +2,22 @@
 
 module Omxwatcher where
 
-import Data.Text (unpack)
-import Data.Text.Encoding (decodeLatin1)
-import Data.List.Split (chunksOf)
-import Data.ByteString as B (readFile)
-import Control.Monad (forM_)
-import Text.HTML.Scalpel
-import Text.HTML.TagSoup (parseTags, Tag)
+import           Control.Monad      (forM_)
+import           Data.ByteString    as B (readFile)
+import           Data.List.Split    (chunksOf)
+import           Data.Text          (unpack)
+import           Data.Text.Encoding (decodeLatin1)
+import           Text.HTML.Scalpel
+import           Text.HTML.TagSoup  (Tag, parseTags)
 
 data Stock = Stock
-    { name :: String
-    , latestPrice :: String
-    , priceChange :: String
+    { name               :: String
+    , latestPrice        :: String
+    , priceChange        :: String
     , priceChangePercent :: String
-    , highest :: String
-    , lowest :: String
-    , volume :: String
+    , highest            :: String
+    , lowest             :: String
+    , volume             :: String
     } deriving Show
 
 main :: IO ()

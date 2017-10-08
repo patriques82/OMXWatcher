@@ -2,14 +2,14 @@
 
 module OMXWatcher.Chart (plotStockData) where
 
-import OMXWatcher.Types
-import OMXWatcher.Indicator
+import           OMXWatcher.Indicator
+import           OMXWatcher.Types
 
-import qualified Data.Vector as V (Vector, toList)
-import Data.Time.LocalTime (LocalTime(..))
-import Graphics.Rendering.Chart.Easy
-import Graphics.Rendering.Chart.Gtk
-import Graphics.Rendering.Chart.Backend.Cairo
+import           Data.Time.LocalTime                    (LocalTime (..))
+import qualified Data.Vector                            as V (Vector, toList)
+import           Graphics.Rendering.Chart.Backend.Cairo
+import           Graphics.Rendering.Chart.Easy
+import           Graphics.Rendering.Chart.Gtk
 
 
 renderChart :: ([Double] -> [Double]) -> [StockPoint] -> [(LocalTime, Double)]
