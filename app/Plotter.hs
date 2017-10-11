@@ -13,7 +13,7 @@ main :: IO ()
 main = do
 --  args <- getArgs -- pathToCSVfile
 --  guard (not . null $ args)
-  csvRaw <- BL.readFile "/home/patriques/Haskell/OMXWatcher/testres/SEB-C-2017-08-23-2017-09-22.csv"
+  csvRaw <- BL.readFile "/home/patriques/Haskell/OMXWatcher/testres/SEB-C-2016-10-10-2017-10-06.csv"
   case parseCSV csvRaw of
     Left err -> putStrLn err
     Right stocks -> plotStockData "SEB-C" stocks

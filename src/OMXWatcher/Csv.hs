@@ -32,9 +32,9 @@ instance FromNamedRecord StockRawData where
 
 parseCSV :: ByteString -> Either Error [StockPoint]
 parseCSV csvRawData = do
-  let options = defaultDecodeOptions { decDelimiter = fromIntegral (ord ';') }
+  let options = defaultDecodeOptions {decDelimiter = fromIntegral (ord ';')}
   (_, v) <- decodeByNameWith options csvRawData
-  sequence . fmap rawToStockPoint $ toList v
+  traverse rawToStockPoint $ toList v
 
 rawToStockPoint :: StockRawData -> Either Error StockPoint
 rawToStockPoint r = StockPoint <$>
@@ -49,10 +49,11 @@ stringToLocalDate :: String -> Either Error LocalTime
 stringToLocalDate s = do
   (yyyy, mm, dd) <- getYearMonthDay
   return $ LocalTime (fromGregorian (read yyyy) (read mm) (read dd)) midnight
-    where getYearMonthDay =
-            case splitNumbers s of
-              [yyyy, mm, dd] -> Right (yyyy, mm, dd)
-              x              -> Left $ "Not valid date: " ++ (show x)
+  where
+    getYearMonthDay =
+      case splitNumbers s of
+        [yyyy, mm, dd] -> Right (yyyy, mm, dd)
+        x              -> Left $ "Not valid date: " ++ show x
 
 stringToDouble :: String -> Either Error Double
 stringToDouble s = do
@@ -61,7 +62,7 @@ stringToDouble s = do
     where getNumDecimal =
             case splitNumbers s of
               [n, d] -> Right (n, d)
-              x      -> Left $ "Not valid double: " ++ (show x)
+              x      -> Left $ "Not valid double: " ++ show x
 
 splitNumbers :: String -> [String]
 splitNumbers = wordsBy (not . isDigit)

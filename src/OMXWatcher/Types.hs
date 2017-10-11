@@ -13,3 +13,5 @@ data StockPoint = StockPoint
   }
 
 type Error = String
+
+
